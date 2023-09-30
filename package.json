@@ -1,5 +1,11 @@
 {
+  "scripts": {
+    "build": "npx tsc server.ts --outDir dist",
+    "start": "node dist/server.js"
+  },
   "dependencies": {
+    "@types/node": "^20.8.0",
+    "typescript": "^5.2.2",
     "xstate": "^4.38.2"
   }
 }
