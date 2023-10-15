@@ -1,0 +1,14 @@
+{
+  "name": "server",
+  "version": "0.0.0",
+  "scripts": {
+    "build": "npx tsc index.ts --declaration true --outDir dist"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@types/node": "^20.8.0",
+    "typescript": "^5.2.2",
+    "xstate": "^4.38.2"
+  }
+}
