@@ -47,3 +47,9 @@ export interface ReadyEvent {
     type: typeof READY_EVENT,
     value: Pair,
 }
+
+export interface Console {
+    log: (...pars) => void,
+    warn: (...pars) => void,
+    error: (...pars) => void,
+}
