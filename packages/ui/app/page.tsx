@@ -15,6 +15,7 @@ export default function Home() {
 
       </main>
       <footer className='shrink-0 p-3'>
+        <Status />
       </footer>
     </AppContextProvider>
   )

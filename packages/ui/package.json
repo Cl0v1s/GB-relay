@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "bufferutil": "^4.0.8",
+    "cors": "^2.8.5",
     "nes-ui-react": "^0.2.15",
     "next": "13.5.4",
     "react": "^18",

@@ -1,6 +1,7 @@
 import { Server as LinkServer, Event as LinkEvent } from 'server';
-import { Server as IOServer } from 'socket.io';
+import { Server as IOServer, ServerOptions, Socket } from 'socket.io';
 import type { Server as HTTPServer } from 'http'
+import { SocketServerEvent } from './../../src/SocketEvents';
 
 let instance = (global as any).server;
 
@@ -10,18 +11,18 @@ if(!instance) {
     (global as any).server = instance;
 }
 
-export { instance };
-
-type SocketClientEvent = "ask-status";
-type SocketServerEvent = "status";
-
 class SocketServer extends IOServer {
     private instance: LinkServer | undefined = undefined;
 
-    constructor(httpServer: HTTPServer) {
-        super(httpServer);
+    constructor(httpServer: HTTPServer, options: Partial<ServerOptions>) {
+        super(httpServer, options);
         this.instance = instance;
         this.instance?.subscribe(this.onLinkServerEvent);
+
+        this.on("connection", (socket) => {
+            console.log(socket.request.connection.remoteAddress);
+            this.status(socket);
+        });
     }
 
     private dispatch(eventName: SocketServerEvent, props: object) {
@@ -29,23 +30,24 @@ class SocketServer extends IOServer {
     }
 
     private onLinkServerEvent(eventName: LinkEvent, eventProps: object) {
+        this.status();
         switch(eventName) {
             case "start": {
                 break;
             }
             case "connection": {
-
                 break;
             }
             case "end": {
-
                 break;
             }
         }
     }
 
-    private status() {
-        this.dispatch("status", { started: this.instance?.started, clients: this.instance?.clients.length });
+    private status(target: Socket | null = null) {
+        const stat = { started: this.instance?.started, clients: this.instance?.clients.length };
+        if(!target) this.dispatch("status", stat);
+        else target.emit("status", stat);
     }
 }
 

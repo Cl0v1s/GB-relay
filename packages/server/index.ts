@@ -19,7 +19,7 @@ class Server {
 
     started: boolean = false;
     private console: Console = global.console;
-    private subscribers: Array<Subscriber>;
+    private subscribers: Array<Subscriber> = [];
 
     constructor(port?: number, console?: Console) {
         this.port = port || 6374;
