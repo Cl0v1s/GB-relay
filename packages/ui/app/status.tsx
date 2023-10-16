@@ -2,17 +2,32 @@
 
 import {
     Hr, 
-    BadgeSplitted
-  } from 'nes-ui-react';
+    BadgeSplitted,
+    Badge
+} from 'nes-ui-react';
 
-export default function Status({started}: {started: boolean}) {
+interface IStatus {
+    status: false | { started: boolean, clients: number }
+}
+
+export default function Status({ status }: IStatus) {
     return (
         <>
             <Hr color="primary" height={4} className='mb-1' />
-            <Hr color="success" height={2} />
-            <div className='flex justify-between mt-2'>
-            <BadgeSplitted textLeft='Server' backgroundColor={started ? "success" : "error"} text={started ? "running" : "down"} />
-            </div>
+            <Hr color="success" height={2} className='mb-2' />
+            {
+                !status ? (
+                    <Badge backgroundColor="error" text="Error" />
+                ) : (
+                    <div className='flex justify-between items-center'>
+                        <BadgeSplitted textLeft='Server' backgroundColor={status.started ? "success" : "error"} text={status.started ? "running" : "down"} />
+                        <span>
+                            Clients connected: {status.clients}
+                        </span>
+                    </div>
+                )
+            }
+
         </>
     )
 }

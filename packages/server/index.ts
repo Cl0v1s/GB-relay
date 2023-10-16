@@ -7,6 +7,10 @@ import { INIT_EVENT, BUFFER_EVENT, UNPAIR_EVENT,
 
 import { createClientMachine} from './clientMachine';
 
+export type Event = "start" | "connection" | "end";
+type Subscriber = (eventName: Event, eventProps: object) => void;
+
+
 class Server {
     port = 6374;
 
@@ -14,7 +18,8 @@ class Server {
     server: Net.Server = new Net.Server();
 
     started: boolean = false;
-    console: Console = global.console;
+    private console: Console = global.console;
+    private subscribers: Array<Subscriber>;
 
     constructor(port?: number, console?: Console) {
         this.port = port || 6374;
@@ -31,6 +36,20 @@ class Server {
         this.server.on('connection', this.onConnection);
 
         this.started = true;
+
+        this.signal("start")
+    }
+
+    subscribe(subscriber: Subscriber) {
+        this.subscribers.push(subscriber);
+    }
+
+    unsubscribe(subscriber: Subscriber) {
+        this.subscribers = this.subscribers.filter((s) => s !== subscriber);
+    }
+
+    private signal(eventName: Event, eventProps: object = {}) {
+        this.subscribers.forEach((sub) => sub(eventName, eventProps));
     }
 
     private receive(buffer) {
@@ -66,6 +85,7 @@ class Server {
         // ends the connection.
         socket.on('end', () => {
             client.send({ type: UNPAIR_EVENT });
+            this.signal('end', { client })
         });
 
         // Don't forget to catch error, for your own sake.
@@ -77,6 +97,7 @@ class Server {
         this.clients.push(client as unknown as Interpreter<any>);
         // we init this new actor
         client.send({ type: INIT_EVENT, value: { socket, sessionId: client.sessionId }} as InitEvent);
+        this.signal("connection", { client });
     }
 }
 

@@ -1,14 +1,13 @@
+"use client";
+
 // https://kyr0.github.io/nes-ui-react/
-
 import Status from './status';
-
+import { AppContextProvider } from "@/src/useApp";
 
 export default function Home() {
 
-
-
   return (
-    <>
+    <AppContextProvider>
       <header>
 
       </header>
@@ -16,8 +15,7 @@ export default function Home() {
 
       </main>
       <footer className='shrink-0 p-3'>
-        <Status started={true} />
       </footer>
-    </>
+    </AppContextProvider>
   )
 }
