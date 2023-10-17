@@ -17,7 +17,7 @@ class SocketServer extends IOServer {
     constructor(httpServer: HTTPServer, options: Partial<ServerOptions>) {
         super(httpServer, options);
         this.instance = instance;
-        this.instance?.subscribe(this.onLinkServerEvent);
+        this.instance?.subscribe((eventName, eventProps) => this.onLinkServerEvent(eventName, eventProps));
 
         this.on("connection", (socket) => {
             console.log(socket.request.connection.remoteAddress);

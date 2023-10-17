@@ -21,6 +21,9 @@ export function createClientMachine(clients: Array<Interpreter<any>>, send: (soc
         states: {
             inactive: {
                 on: {
+                    [UNPAIR_EVENT]: {
+                        target: 'disconnected',
+                    },
                     [INIT_EVENT]: {
                         target: "hello",
                         actions: assign({
@@ -32,6 +35,9 @@ export function createClientMachine(clients: Array<Interpreter<any>>, send: (soc
             },
             hello: {
                 on: {
+                    [UNPAIR_EVENT]: {
+                        target: 'disconnected',
+                    },
                     [BUFFER_EVENT]: {
                         actions: choose([
                             {
@@ -62,6 +68,9 @@ export function createClientMachine(clients: Array<Interpreter<any>>, send: (soc
                     send(ctx.socket, Buffer.from(message, "hex"))
                 },
                 on: {
+                    [UNPAIR_EVENT]: {
+                        target: 'disconnected',
+                    },
                     [BUFFER_EVENT]: {
                         target: 'waitProtocol',
                         actions: assign({
@@ -77,6 +86,9 @@ export function createClientMachine(clients: Array<Interpreter<any>>, send: (soc
                     send(ctx.socket, Buffer.from(ctx.rom, "hex"));
                 }, 
                 on: {
+                    [UNPAIR_EVENT]: {
+                        target: 'disconnected',
+                    },
                     [BUFFER_EVENT]: {
                         target: 'waitPair',
                         actions: [
@@ -95,6 +107,9 @@ export function createClientMachine(clients: Array<Interpreter<any>>, send: (soc
                     })
                 },
                 on: {
+                    [UNPAIR_EVENT]: {
+                        target: 'disconnected',
+                    },
                     [PAIR_EVENT]: {
                         target: 'paired',
                         actions: assign({

@@ -33,7 +33,7 @@ class Server {
 
         // When a client requests a connection with the server, the server creates a new
         // socket dedicated to that client.
-        this.server.on('connection', this.onConnection);
+        this.server.on('connection', (socket) =>  this.onConnection(socket));
 
         this.started = true;
 
@@ -66,9 +66,11 @@ class Server {
     }
 
     private onConnection(socket) {
-        const client = interpret(createClientMachine(this.clients, this.send));
+        const client = interpret(createClientMachine(this.clients, (socket, buffer) => this.send(socket, buffer)));
         client.subscribe((c) => {
             if(c.value !== "disconnected") return;
+            this.console.log(`${client.sessionId} cleaned up !`)
+            this.signal('end', { client })
             this.clients = this.clients.filter((cl) => cl.sessionId !== c._sessionid);
         })
         client.start();
@@ -84,13 +86,13 @@ class Server {
         // When the client requests to end the TCP connection with the server, the server
         // ends the connection.
         socket.on('end', () => {
+            this.console.log(`${client.sessionId} disconnected`)
             client.send({ type: UNPAIR_EVENT });
-            this.signal('end', { client })
         });
 
         // Don't forget to catch error, for your own sake.
         socket.on('error', (err) => {
-            console.log(`Error: ${err}`);
+            this.console.log(`Error: ${err}`);
         });
 
         // let's go
