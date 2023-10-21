@@ -1,6 +1,6 @@
 "use client";
 
-import { useApp } from '@/src/useApp';
+import { useApp } from './useApp';
 import {
     Hr, 
     BadgeSplitted,

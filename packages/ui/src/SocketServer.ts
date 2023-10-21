@@ -1,22 +1,16 @@
-import { Server as LinkServer, Event as LinkEvent } from 'server';
+import { Server as LinkServerType, Event as LinkEvent } from 'server';
 import { Server as IOServer, ServerOptions, Socket } from 'socket.io';
 import type { Server as HTTPServer } from 'http'
-import { SocketServerEvent } from './../../src/SocketEvents';
+import { SocketServerEvent } from './SocketEvents';
+import * as LinkServer from './LinkServer';
 
-let instance = (global as any).server;
-
-if(!instance) {
-    instance = new LinkServer();
-    instance.start();
-    (global as any).server = instance;
-}
 
 class SocketServer extends IOServer {
-    private instance: LinkServer | undefined = undefined;
+    private instance: LinkServerType | undefined = undefined;
 
     constructor(httpServer: HTTPServer, options: Partial<ServerOptions>) {
         super(httpServer, options);
-        this.instance = instance;
+        this.instance = LinkServer.Instance;
         this.instance?.subscribe((eventName, eventProps) => this.onLinkServerEvent(eventName, eventProps));
 
         this.on("connection", (socket) => {

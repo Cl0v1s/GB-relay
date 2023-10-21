@@ -1,7 +1,7 @@
 import type { Server as HTTPServer } from 'http'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Socket as NetSocket } from 'net';
-import { SocketServer as LinkSocketServer } from './server';
+import { SocketServer as LinkSocketServer } from '../../src/SocketServer';
 import cors from "cors";
 
 // Create a new instance of the CORS middleware

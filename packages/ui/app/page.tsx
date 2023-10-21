@@ -2,7 +2,7 @@
 
 // https://kyr0.github.io/nes-ui-react/
 import Status from './status';
-import { AppContextProvider } from "@/src/useApp";
+import { AppContextProvider } from './useApp';
 
 export default function Home() {
 
