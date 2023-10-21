@@ -1,13 +1,14 @@
 // Include Nodejs' net module.
-import { Interpreter, interpret } from 'xstate';
+import { Interpreter, interpret, State } from 'xstate';
 import * as Net from 'net';
 import { INIT_EVENT, BUFFER_EVENT, UNPAIR_EVENT, 
-    InitEvent, BufferEvent, Console
+    InitEvent, BufferEvent, Console, Pair, emulators
 } from './types';
 
 import { createClientMachine} from './clientMachine';
 
-export type Event = "start" | "connection" | "end";
+export type Event = "start" | "connection" | "end" | "clientReady";
+export { emulators as Emulators };
 type Subscriber = (eventName: Event, eventProps: object) => void;
 
 
@@ -65,13 +66,21 @@ class Server {
         socket.write(buffer);
     }
 
+    private cleanUp(client: State<Pair, any, any, {
+        value: any;
+        context: Pair;
+    }, any>) {
+        this.console.log(`${client._sessionid} cleaned up !`)
+        this.signal('end', { client })
+        this.clients = this.clients.filter((cl) => cl.sessionId !== client._sessionid);
+    }
+
     private onConnection(socket) {
         const client = interpret(createClientMachine(this.clients, (socket, buffer) => this.send(socket, buffer)));
         client.subscribe((c) => {
-            if(c.value !== "disconnected") return;
-            this.console.log(`${client.sessionId} cleaned up !`)
-            this.signal('end', { client })
-            this.clients = this.clients.filter((cl) => cl.sessionId !== c._sessionid);
+            if(c.value === "disconnected") this.cleanUp(c);
+            else if(c.value === "waitPair") this.signal("clientReady", { emulator: c.context.emulator, rom: c.context.rom, ip: c.context.socket?.remoteAddress })
+
         })
         client.start();
         this.console.log(`Client connected with id ${client.sessionId}.`);

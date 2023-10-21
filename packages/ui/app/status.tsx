@@ -23,6 +23,7 @@ export default function Status() {
     React.useEffect(() => {
         socket?.on("status" as SocketServerEvent, setStatus);
         socket?.on("disconnect", onDisconnect);
+        socket?.on("clientReady", (d) => console.log(d))
         return () => {
             socket?.off("status" as SocketServerEvent, setStatus)
             socket?.off("disconnect", onDisconnect);

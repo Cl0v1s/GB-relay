@@ -12,7 +12,7 @@ export function createClientMachine(clients: Array<Interpreter<any>>, send: (soc
         initial: 'inactive',
         context: {
             sessionId: undefined,
-            socket: undefined,
+            socket: undefined as unknown as Net.Socket,
             pair: undefined,
             emulator: undefined,
             protocolVersion: undefined,
@@ -41,10 +41,10 @@ export function createClientMachine(clients: Array<Interpreter<any>>, send: (soc
                     [BUFFER_EVENT]: {
                         actions: choose([
                             {
-                                cond: (ctx, event) => !!emulators.find((e) => e === (event as BufferEvent).value.toString('hex')),
+                                cond: (ctx, event) => !!Object.keys(emulators).find((e) => e === (event as BufferEvent).value.toString('hex')),
                                 actions: [
                                     assign({
-                                        emulator: (ctx, event) => emulators.find((e) => e === (event as BufferEvent).value.toString('hex')),
+                                        emulator: (ctx, event) => Object.keys(emulators).find((e) => e === (event as BufferEvent).value.toString('hex')),
                                     }),
                                     raise({ type: NEXT_EVENT })
                                 ]

@@ -3,7 +3,9 @@ import { AnyActorRef } from "xstate";
 
 const MY_OLD_BOY = "00000006000100000004";
 
-export const emulators = [MY_OLD_BOY];
+export const emulators = {
+    [MY_OLD_BOY]: "My Old Boy"
+};
 
 const POKEMON_ROM = "0000003d000232626166393262633661613663393236326135313433376636386635353065300019706b6d6e20706f6c6973686564206372797374616c2e676263";
 const MY_OLD_BOY_VERSION = "000000020003";
@@ -18,7 +20,7 @@ export const READY_EVENT = "READY";
 
 export interface Pair {
  sessionId?: AnyActorRef | string,
- socket?: any,
+ socket: Net.Socket,
  emulator?: string,
  protocolVersion?: string,
  rom?: string,

@@ -14,7 +14,6 @@ class SocketServer extends IOServer {
         this.instance?.subscribe((eventName, eventProps) => this.onLinkServerEvent(eventName, eventProps));
 
         this.on("connection", (socket) => {
-            console.log(socket.request.connection.remoteAddress);
             this.status(socket);
         });
     }
@@ -23,7 +22,7 @@ class SocketServer extends IOServer {
         this.emit(eventName, props);
     }
 
-    private onLinkServerEvent(eventName: LinkEvent, eventProps: object) {
+    private async onLinkServerEvent(eventName: LinkEvent, eventProps: any) {
         this.status();
         switch(eventName) {
             case "start": {
@@ -33,6 +32,12 @@ class SocketServer extends IOServer {
                 break;
             }
             case "end": {
+                break;
+            }
+            case "clientReady": {
+                const sockets = await this.fetchSockets();
+                sockets.filter((socket) => process.env.NODE_ENV === "development" || socket.handshake.address === eventProps.ip)
+                    .forEach((socket) => socket.emit(eventName, { emulator: eventProps.emulator, rom: eventProps.rom }));
                 break;
             }
         }
