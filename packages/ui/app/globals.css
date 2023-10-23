@@ -3,3 +3,6 @@
 @tailwind utilities;
 @import "nes-ui-react";
 
+html.nes-ui {
+    cursor: initial;
+}

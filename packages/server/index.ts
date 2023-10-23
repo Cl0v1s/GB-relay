@@ -71,7 +71,7 @@ class Server {
         context: Pair;
     }, any>) {
         this.console.log(`${client._sessionid} cleaned up !`)
-        this.signal('end', { client })
+        this.signal('end', { id: client.context.sessionId })
         this.clients = this.clients.filter((cl) => cl.sessionId !== client._sessionid);
     }
 
@@ -79,7 +79,7 @@ class Server {
         const client = interpret(createClientMachine(this.clients, (socket, buffer) => this.send(socket, buffer)));
         client.subscribe((c) => {
             if(c.value === "disconnected") this.cleanUp(c);
-            else if(c.value === "waitPair") this.signal("clientReady", { emulator: c.context.emulator, rom: c.context.rom, ip: c.context.socket?.remoteAddress })
+            else if(c.value === "waitPair") this.signal("clientReady", { id: c.context.sessionId, emulator: c.context.emulator, rom: c.context.rom, ip: c.context.socket?.remoteAddress })
 
         })
         client.start();
